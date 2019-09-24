@@ -106,8 +106,5 @@ df_plot %>%
 
 gg <- last_plot()
 
-ggsave(
-        "2019-09-24-school-diversity/tidytuesday-ikashnitsky-school-diversity.png",
-        gg, 
-        width = 10, height = 7, type = "cairo"
-)
+ggsave("2019-09-24-school-diversity/tidytuesday-ikashnitsky-school-diversity.png",  gg, width = 10, height = 7, type  = "cairo")
+ggsave("2019-09-24-school-diversity/tidytuesday-ikashnitsky-school-diversity.pdf",  gg, width = 10, height = 7, device = cairo_pdf)
