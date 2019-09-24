@@ -78,7 +78,7 @@ df_plot %>%
         )+
         labs(
                 title = "Racial diversity in the US schools",
-                subtitle = "Proportions of students attending the three categories of schools by  state",
+                subtitle = "Proportions of students attending the three categories of schools by state",
                 caption = "Data: The Washington Post, #TidyTuesday | Dataviz: @ikashnitsky",
                 color = "Total number of students"
         )+
