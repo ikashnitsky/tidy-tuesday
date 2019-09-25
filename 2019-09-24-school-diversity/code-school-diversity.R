@@ -59,8 +59,6 @@ df_plot %>%
                 aes(label = state, size = nstud, color = nstud, alpha = nstud), 
                 family = font_rc, fontface = 2
         )+
-        scale_L_continuous("Extremely undiverse")+
-        facet_wrap(~year)+
         scale_size_continuous(range = c(1, 10))+
         scale_alpha_continuous(range = c(.7, 1), trans = "reverse")+
         scale_color_viridis_c(
@@ -68,6 +66,9 @@ df_plot %>%
                 breaks = 1:5*1e6,
                 labels = paste0(1:5, "M")
         )+
+        
+        scale_L_continuous("Extremely undiverse")+
+        facet_wrap(~year)+
         guides(
                 size = FALSE,
                 alpha = FALSE,
