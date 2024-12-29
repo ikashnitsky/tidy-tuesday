@@ -12,7 +12,6 @@ library(tidyverse)
 library(sf)
 # pak::pak("hrbrmstr/imago")
 library(imago)
-library(countrycode)
 
 # get data for the week
 tuesdata <- tidytuesdayR::tt_load(2024, week = 52)
@@ -48,7 +47,7 @@ theme_set(theme_ik(base_family = "ah", base_size = 11))
 # plot
 df |> 
     ggplot(aes(fill = n_pub_holidays))+
-    geom_sf(color = "#ffffff", linewidth = .01)+ # for whatever reason color = NA gives an error
+    geom_sf(color = "#ffffff", size = 0.01, linewidth = .01)+ # for whatever reason color = NA gives an error
     scale_fill_viridis_b(
         breaks = c(5, 10, 15, 20), 
         guide = guide_colorsteps(direction = "horizontal", barwidth = 10),
@@ -65,8 +64,71 @@ df |>
         caption = "#TidyTuesday 2024-52 | @ikashnitsky.phd"
     )
 
+
 ggsave(
     filename = "2024-52-holiday-travel/n-public-holidays.png",
+    width = 7, 
+    height = 4
+)
+
+# check the distribution
+df |> 
+    ggplot(aes(n_pub_holidays))+
+    geom_density(size = 1, color = "#044444", lineend = "round")+
+    geom_hline(yintercept = 0, color = "#077777", size = .5)
+
+
+# the canonical Robinson distribution -------------------------------------
+
+# get world map outline (you might need to install the package)
+world_outline <- spData::world |> 
+    st_as_sf()
+
+# let's use a fancy projection
+world_outline_robinson <- world_outline |> 
+    st_transform(crs = "ESRI:54030")
+
+# country borders
+country_borders <- world_outline_robinson |> 
+    rmapshaper::ms_innerlines()
+
+# get ISO3c codes
+library(countrycode)
+
+world_outline_robinson <- world_outline_robinson |> 
+    filter(!iso_a2 == "AQ") |> # get rid of Antarctica
+    mutate(
+        iso3c = countrycode(iso_a2, origin = "iso2c", destination = "iso3c")
+    )
+    
+# unify
+df_rob <- world_outline_robinson |> left_join(n_holidays) 
+
+# map!
+df_rob |> 
+    ggplot()+
+    geom_sf(fill = "#269999", color = NA)+
+    geom_sf(aes(fill = n_pub_holidays), color = NA)+
+    geom_sf(data = country_borders, size = .25, color = "#269999" |> prismatic::clr_lighten())+
+    scale_fill_viridis_b(
+        breaks = c(5, 10, 15, 20), 
+        guide = guide_colorsteps(direction = "horizontal", barwidth = 20),
+        na.value = "#badada"
+    )+
+    coord_sf(datum = NA)+
+    theme(
+        legend.position = "top",
+        legend.title.position = "top",
+        plot.title = element_text(hjust = .5)
+    )+
+    labs(
+        fill = NULL,
+        title = "Number of public holidays per year",
+        caption = "#TidyTuesday 2024-52 | @ikashnitsky.phd"
+    )
+
+ggsave(
+    filename = "2024-52-holiday-travel/n-public-holidays-robinson.png",
     width = 7, 
     height = 4
 )
