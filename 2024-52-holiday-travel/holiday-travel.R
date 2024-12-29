@@ -107,9 +107,8 @@ df_rob <- world_outline_robinson |> left_join(n_holidays)
 # map!
 df_rob |> 
     ggplot()+
-    geom_sf(fill = "#269999", color = NA)+
     geom_sf(aes(fill = n_pub_holidays), color = NA)+
-    geom_sf(data = country_borders, size = .25, color = "#269999" |> prismatic::clr_lighten())+
+    geom_sf(data = country_borders, size = .1, color = "#269999" |> prismatic::clr_lighten())+
     scale_fill_viridis_b(
         breaks = c(5, 10, 15, 20), 
         guide = guide_colorsteps(direction = "horizontal", barwidth = 20),
